@@ -1,0 +1,122 @@
+// builder
+{{$UnionNameToIndex := .UnionNameToIndex}}{{$UnionByIndex := .UnionByIndex}}
+type {{.MessageName}}Builder struct {
+{{range .MessageFields}}	{{.FieldName}} {{if .IsArray}}[]{{end}}{{if .IsMessage}}*{{.FieldGoType}}Builder{{else}}{{.FieldGoType}}{{end}}
+{{end -}}
+{{range .UnionByIndex}}{{range .}}	{{.FieldName}} {{if .IsMessage}}*{{.FieldGoType}}Builder{{else}}{{.FieldGoType}}{{end}}
+{{end}}{{end}}
+	// internal
+	// implements membuffers.Builder
+	_builder membuffers.InternalBuilder
+	_overrideWithRawBuffer []byte
+}
+{{range .MessageFields}}{{if and .IsArray .IsMessage}}
+func (w *{{.MessageName}}Builder) arrayOf{{.FieldName}}() []membuffers.MessageWriter {
+	res := make([]membuffers.MessageWriter, len(w.{{.FieldName}}))
+	for i, v := range w.{{.FieldName}} {
+		res[i] = v
+	}
+	return res
+}
+{{end}}{{end}}
+{{- range .MessageFields}}{{if and .IsArray .IsInline}}
+func (w *{{.MessageName}}Builder) arrayOf{{.FieldName}}() []{{.InlineUnderlyingGoType}} {
+	res := make([]{{.InlineUnderlyingGoType}}, len(w.{{.FieldName}}))
+	for i, v := range w.{{.FieldName}} {
+		res[i] = v
+	}
+	return res
+}
+{{end}}{{end}}
+func (w *{{.MessageName}}Builder) Write(buf []byte) (err error) {
+	if w == nil {
+		return
+	}
+	w._builder.NotifyBuildStart()
+	defer w._builder.NotifyBuildEnd()
+	defer func() {
+		if r := recover(); r != nil {
+			err = &membuffers.ErrBufferOverrun{}
+		}
+	}()
+	if w._overrideWithRawBuffer != nil {
+		return w._builder.WriteOverrideWithRawBuffer(buf, w._overrideWithRawBuffer)
+	}
+	w._builder.Reset()
+	{{- range .MessageFields}}
+	{{- if .IsUnion}}
+	w._builder.WriteUnionIndex(buf, uint16(w.{{.FieldName}}))
+	switch w.{{.FieldName}} {
+	{{- $UnionName := .FieldName}}{{$UnionNum := index $UnionNameToIndex .FieldName}}
+	{{- range index $UnionByIndex $UnionNum}}
+	case {{capsnake (print .MessageName $UnionName .FieldName)}}:
+		w._builder.Write{{.TypeAccessor}}(buf, {{if .IsEnum}}uint16({{end}}{{if .IsInline}}{{.InlineUnderlyingGoType}}({{end}}w.{{.FieldName}}){{if or .IsEnum .IsInline}}){{end}}
+	{{- end}}
+	}
+	{{- else if .IsMessage}}
+	err = w._builder.WriteMessage{{if .IsArray}}Array{{end}}(buf, w.{{if .IsArray}}arrayOf{{.FieldName}}(){{else}}{{.FieldName}}{{end}})
+	if err != nil {
+		return
+	}
+	{{- else}}
+	w._builder.Write{{.TypeAccessor}}{{if .IsArray}}Array{{end}}(buf, {{if .IsEnum}}uint16({{end}}{{if and .IsInline (not .IsArray)}}{{.InlineUnderlyingGoType}}({{end}}w.{{if and .IsArray .IsInline}}arrayOf{{.FieldName}}(){{else}}{{.FieldName}}{{end}}){{if .IsEnum}}){{end}}{{if and .IsInline (not .IsArray)}}){{end}}{{end}}{{end}}
+	return nil
+}
+
+func (w *{{.MessageName}}Builder) HexDump(prefix string, offsetFromStart membuffers.Offset) (err error) {
+	if w == nil {
+		return
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = &membuffers.ErrBufferOverrun{}
+		}
+	}()
+	w._builder.Reset()
+	{{- range .MessageFields}}
+	{{- if .IsUnion}}
+	w._builder.HexDumpUnionIndex(prefix, offsetFromStart, "{{.MessageName}}.{{.FieldName}}", uint16(w.{{.FieldName}}))
+	switch w.{{.FieldName}} {
+	{{- $UnionName := .FieldName}}{{$UnionNum := index $UnionNameToIndex .FieldName}}
+	{{- range index $UnionByIndex $UnionNum}}
+	case {{capsnake (print .MessageName $UnionName .FieldName)}}:
+		w._builder.HexDump{{.TypeAccessor}}(prefix, offsetFromStart, "{{.MessageName}}.{{.FieldName}}", {{if .IsEnum}}uint16({{end}}{{if .IsInline}}{{.InlineUnderlyingGoType}}({{end}}w.{{.FieldName}}){{if or .IsEnum .IsInline}}){{end}}
+	{{- end}}
+	}
+	{{- else if .IsMessage}}
+	err = w._builder.HexDumpMessage{{if .IsArray}}Array{{end}}(prefix, offsetFromStart, "{{.MessageName}}.{{.FieldName}}", w.{{if .IsArray}}arrayOf{{.FieldName}}(){{else}}{{.FieldName}}{{end}})
+	if err != nil {
+		return
+	}
+	{{- else}}
+	w._builder.HexDump{{.TypeAccessor}}{{if .IsArray}}Array{{end}}(prefix, offsetFromStart, "{{.MessageName}}.{{.FieldName}}", {{if .IsEnum}}uint16({{end}}{{if and .IsInline (not .IsArray)}}{{.InlineUnderlyingGoType}}({{end}}w.{{if and .IsArray .IsInline}}arrayOf{{.FieldName}}(){{else}}{{.FieldName}}{{end}}){{if .IsEnum}}){{end}}{{if and .IsInline (not .IsArray)}}){{end}}{{end}}{{end}}
+	return nil
+}
+
+func (w *{{.MessageName}}Builder) GetSize() membuffers.Offset {
+	if w == nil {
+		return 0
+	}
+	return w._builder.GetSize()
+}
+
+func (w *{{.MessageName}}Builder) CalcRequiredSize() membuffers.Offset {
+	if w == nil {
+		return 0
+	}
+	w.Write(nil)
+	return w._builder.GetSize()
+}
+
+func (w *{{.MessageName}}Builder) Build() *{{.MessageName}} {
+	buf := make([]byte, w.CalcRequiredSize())
+	if w.Write(buf) != nil {
+		return nil
+	}
+	return {{.MessageName}}Reader(buf)
+}
+
+func {{.MessageName}}BuilderFromRaw(raw []byte) *{{.MessageName}}Builder {
+	return &{{.MessageName}}Builder{_overrideWithRawBuffer: raw}
+}
+

@@ -1,0 +1,33 @@
+func (x *{{.MessageName}}) {{.MessageField.FieldName}}Iterator() *{{.MessageName}}{{.MessageField.FieldName}}Iterator {
+	return &{{.MessageName}}{{.MessageField.FieldName}}Iterator{iterator: x._message.Get{{.MessageField.TypeAccessor}}ArrayIterator({{.MessageField.FieldIndex}})}
+}
+
+type {{.MessageName}}{{.MessageField.FieldName}}Iterator struct {
+	iterator *membuffers.Iterator
+}
+
+func (i *{{.MessageName}}{{.MessageField.FieldName}}Iterator) HasNext() bool {
+	return i.iterator.HasNext()
+}
+
+func (i *{{.MessageName}}{{.MessageField.FieldName}}Iterator) Next{{.MessageField.FieldName}}() {{.MessageField.FieldGoType}} {
+	return {{if or .MessageField.IsEnum .MessageField.IsInline}}{{.MessageField.FieldGoType}}({{end}}i.iterator.Next{{.MessageField.TypeAccessor}}(){{if or .MessageField.IsEnum .MessageField.IsInline}}){{end}}
+}
+
+func (x *{{.MessageName}}) Raw{{.MessageField.FieldName}}Array() []byte {
+	return x._message.RawBufferForField({{.MessageField.FieldIndex}}, 0)
+}
+
+func (x *{{.MessageName}}) Raw{{.MessageField.FieldName}}ArrayWithHeader() []byte {
+	return x._message.RawBufferWithHeaderForField({{.MessageField.FieldIndex}}, 0)
+}
+
+func (x *{{.MessageName}}) String{{.MessageField.FieldName}}() (res string) {
+	res = "["
+	for i := x.{{.MessageField.FieldName}}Iterator(); i.HasNext(); {
+		res += {{if .MessageField.IsEnum}}i.Next{{.MessageField.FieldName}}().String(){{else}}fmt.Sprintf({{if ne .MessageField.FieldGoType "string"}}{{if .MessageField.IsInline}}"%s"{{else}}"%x"{{end}}, {{end}}i.Next{{.MessageField.FieldName}}()){{end}} + ","
+	}
+	res += "]"
+	return
+}
+

@@ -1,0 +1,24 @@
+func {{.MessageName}}Reader(buf []byte) *{{.MessageName}} {
+	x := &{{.MessageName}}{}
+	x._message.Init(buf, membuffers.Offset(len(buf)), _{{.MessageName}}_Scheme, _{{.MessageName}}_Unions)
+	return x
+}
+
+func (x *{{.MessageName}}) IsValid() bool {
+	return x._message.IsValid()
+}
+
+func (x *{{.MessageName}}) Raw() []byte {
+	return x._message.RawBuffer()
+}
+
+func (x *{{.MessageName}}) Equal(y *{{.MessageName}}) bool {
+  if x == nil && y == nil {
+    return true
+  }
+  if x == nil || y == nil {
+    return false
+  }
+  return bytes.Equal(x.Raw(), y.Raw())
+}
+

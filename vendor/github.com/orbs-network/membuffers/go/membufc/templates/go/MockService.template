@@ -1,0 +1,27 @@
+/////////////////////////////////////////////////////////////////////////////
+// service {{.ServiceName}}{{$ServiceName := .ServiceName}}{{$LanguageGoCtx := .LanguageGoCtx}}
+
+type Mock{{.ServiceName}} struct {
+	mock.Mock
+{{- range .ImplementHandlers}}
+	{{.MockImportName}}
+{{- end}}
+}
+
+{{range .Methods -}}
+func (s *Mock{{$ServiceName}}) {{.Name}}({{if $LanguageGoCtx}}ctx context.Context, {{end}}input *{{.Input}}) (*{{.Output}}, error) {
+	ret := s.Called({{if $LanguageGoCtx}}ctx, {{end}}input)
+	if out := ret.Get(0); out != nil {
+		return out.(*{{.Output}}), ret.Error(1)
+	} else {
+		return nil, ret.Error(1)
+	}
+}
+
+{{end}}
+{{- range .RegisterHandlers -}}
+func (s *Mock{{$ServiceName}}) Register{{.CleanName}}(handler {{.ImportName}}) {
+	s.Called(handler)
+}
+
+{{end}}

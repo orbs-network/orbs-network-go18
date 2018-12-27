@@ -1,0 +1,73 @@
+type {{.MessageName}}{{.UnionName}} uint16
+{{$UnionName := .UnionName}}{{$UnionNum := .UnionNum}}{{$ParentFieldIndex := .FieldIndex}}
+const (
+{{- range .UnionFields}}
+	{{capsnake (print .MessageName $UnionName .FieldName)}} {{.MessageName}}{{$UnionName}} = {{.FieldIndex -}}
+{{end}}
+)
+
+func (x *{{.MessageName}}) {{.UnionName}}() {{.MessageName}}{{.UnionName}} {
+	return {{.MessageName}}{{.UnionName}}(x._message.GetUnionIndex({{.FieldIndex}}, {{$UnionNum}}))
+}
+
+{{- range .UnionFields}}
+
+func (x *{{.MessageName}}) Is{{$UnionName}}{{.FieldName}}() bool {
+	is, _ := x._message.IsUnionIndex({{$ParentFieldIndex}}, {{$UnionNum}}, {{.FieldIndex}})
+	return is
+}
+
+{{if not .IsMessage -}}
+func (x *{{.MessageName}}) {{.FieldName}}() {{.FieldGoType}} {
+	is, off := x._message.IsUnionIndex({{$ParentFieldIndex}}, {{$UnionNum}}, {{.FieldIndex}})
+	if !is {
+		panic("Accessed union field of incorrect type, did you check which union type it is first?")
+	}
+	return {{if or .IsEnum .IsInline}}{{.FieldGoType}}({{end}}x._message.Get{{.TypeAccessor}}InOffset(off){{if or .IsEnum .IsInline}}){{end}}
+}
+
+func (x *{{.MessageName}}) String{{.FieldName}}() string {
+{{if .IsEnum}}	return x.{{.FieldName}}().String(){{else}}	return fmt.Sprintf({{if ne .FieldGoType "string"}}{{if .IsInline}}"%s"{{else}}"%x"{{end}}, {{end}}x.{{.FieldName}}()){{end}}
+}
+
+func (x *{{.MessageName}}) Mutate{{.FieldName}}(v {{.FieldGoType}}) error {
+	is, off := x._message.IsUnionIndex({{$ParentFieldIndex}}, {{$UnionNum}}, {{.FieldIndex}})
+	if !is {
+		return &membuffers.ErrInvalidField{}
+	}
+	x._message.Set{{.TypeAccessor}}InOffset(off, {{if .IsEnum}}uint16({{end}}{{if .IsInline}}{{.InlineUnderlyingGoType}}({{end}}v){{if or .IsEnum .IsInline}}){{end}}
+	return nil
+}
+{{- else -}}
+func (x *{{.MessageName}}) {{.FieldName}}() *{{.FieldGoType}} {
+	is, off := x._message.IsUnionIndex({{$ParentFieldIndex}}, {{$UnionNum}}, {{.FieldIndex}})
+	if !is {
+		panic("Accessed union field of incorrect type, did you check which union type it is first?")
+	}
+	b, s := x._message.GetMessageInOffset(off)
+	return {{.FieldGoType}}Reader(b[:s])
+}
+
+func (x *{{.MessageName}}) String{{.FieldName}}() string {
+	return x.{{.FieldName}}().String()
+}
+{{- end -}}{{end}}
+
+func (x *{{.MessageName}}) Raw{{.UnionName}}() []byte {
+	return x._message.RawBufferForField({{.FieldIndex}}, {{.UnionNum}})
+}
+
+func (x *{{.MessageName}}) Raw{{.UnionName}}WithHeader() []byte {
+	return x._message.RawBufferWithHeaderForField({{.FieldIndex}}, {{.UnionNum}})
+}
+
+func (x *{{.MessageName}}) String{{.UnionName}}() string {
+	switch x.{{.UnionName}}() {
+	{{range .UnionFields -}}
+	case {{capsnake (print .MessageName $UnionName .FieldName)}}:
+		return "({{.FieldName}})" + x.String{{.FieldName}}()
+	{{end -}}
+	}
+	return "(Unknown)"
+}
+

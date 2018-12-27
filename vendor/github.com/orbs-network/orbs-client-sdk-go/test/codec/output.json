@@ -1,0 +1,123 @@
+[
+  {
+    "Test": "st_req_1",
+    "SendTransactionRequest": "tAAAAGwAAAABAAAAKgAAAABAwJ2SL+gRMAAAAAAAAAAoAAAATQAAACAAAADfwGxb4kpnre6As1q08Ue7GjXFX/he2mn0Dvgnvd7Bcw4AAABCZW5jaG1hcmtUb2tlbgAACgAAAGdldEJhbGFuY2UAAAAAAABAAAAA645l+COuu6g+ztCiRCKO45iCaFptWHMKNgRnxGAjnVkpLPwSCPdO0ZWrWCjEqAvzTdo2BYHCa4Rt9lCUL99uCQ==",
+    "TxId": "AEDAnZIv6BFWEd76jhp+EM8sxss/w05OYQ9arEN091GdAhuROfPX4w=="
+  },
+  {
+    "Test": "st_req_2",
+    "SendTransactionRequest": "DAEAAMMAAAABAAAAp4cAAACAQQFOnkkWMAAAAAAAAAAoAAAAVAAAACAAAADfwGxb4kpnre6As1q08Ue7GjXFX/he2mn0Dvgnvd7BcwoAAABTdXBlclRva2VuAAAIAAAAdHJhbnNmZXJfAAAAEAAAAAYAAAB1aW50MzIAAAEAAAAUAAAABgAAAHVpbnQ2NAEAAgAAAAAAAAAVAAAABgAAAHN0cmluZwIABQAAAGhlbGxvAAAAEwAAAAUAAABieXRlcwADAAMAAAABAgMAQAAAAJAgU0L88h5GTqvc+EHIT7xCASfw+qh9UxSRfxaWqJRfhudJKyxl5VNAGKgYPenXy6cs5/UGNyvKIHFmvhPDUAE=",
+    "TxId": "AIBBAU6eSRZyajFx2NNzrlg88uyatTEc8vt2dkxqo0asDHiltqxVVQ=="
+  },
+  {
+    "Test": "st_res_1",
+    "SendTransactionResponse": {
+      "BlockHeight": "2135",
+      "BlockTimestamp": "2010-11-21T10:00:00.000Z",
+      "OutputArguments": [
+        "1",
+        "2",
+        "hello",
+        "AQID"
+      ],
+      "OutputArgumentsTypes": [
+        "uint32",
+        "uint64",
+        "string",
+        "bytes"
+      ],
+      "OutputEvents": [
+        {
+          "ContractName": "Contract3",
+          "EventName": "Event3",
+          "Arguments": [
+            "18446744073709550615"
+          ],
+          "ArgumentsTypes": [
+            "uint64"
+          ]
+        }
+      ],
+      "RequestStatus": "COMPLETED",
+      "TxHash": "z4DNiu1ILV0VJ9fccvzv+E5jJlkoSER9LcCw6H38mpA=",
+      "ExecutionResult": "ERROR_SMART_CONTRACT",
+      "TransactionStatus": "COMMITTED"
+    }
+  },
+  {
+    "Test": "cm_req_1",
+    "CallMethodRequest": "ywAAAAEAAACnhwAAAIBBAU6eSRYwAAAAAAAAACgAAABUAAAAIAAAAN/AbFviSmet7oCzWrTxR7saNcVf+F7aafQO+Ce93sFzCgAAAFN1cGVyVG9rZW4AAA4AAABjaGVja1NvbWV0aGluZwAAXwAAABAAAAAGAAAAdWludDMyAAABAAAAFAAAAAYAAAB1aW50NjQBAFDp//////9/FQAAAAYAAABzdHJpbmcCAAUAAABoZWxsbwAAABMAAAAFAAAAYnl0ZXMAAwADAAAAAQID"
+  },
+  {
+    "Test": "cm_res_1",
+    "CallMethodResponse": {
+      "BlockHeight": "87438",
+      "BlockTimestamp": "2010-11-21T10:00:00.000Z",
+      "OutputArguments": [],
+      "OutputArgumentsTypes": [],
+      "OutputEvents": [
+        {
+          "ContractName": "Contract1",
+          "EventName": "Event1",
+          "Arguments": [
+            "1",
+            "2",
+            "hello",
+            "AQID"
+          ],
+          "ArgumentsTypes": [
+            "uint32",
+            "uint64",
+            "string",
+            "bytes"
+          ]
+        },
+        {
+          "ContractName": "Contract2",
+          "EventName": "Event2",
+          "Arguments": [],
+          "ArgumentsTypes": []
+        }
+      ],
+      "RequestStatus": "NOT_FOUND",
+      "ExecutionResult": "SUCCESS"
+    }
+  },
+  {
+    "Test": "gt_req_1",
+    "GetTransactionStatusRequest": "AQAAAMgAAAAAgEEBTp5JFiAAAAByajFx2NNzrlg88uyatTEc8vt2dkxqo0asDHiltqxVVQ=="
+  },
+  {
+    "Test": "gt_res_1",
+    "GetTransactionStatusResponse": {
+      "BlockHeight": "18446744073709546615",
+      "BlockTimestamp": "2020-11-21T20:00:00.000Z",
+      "OutputArguments": [
+        "18446744073709550615"
+      ],
+      "OutputArgumentsTypes": [
+        "uint64"
+      ],
+      "OutputEvents": [],
+      "RequestStatus": "REJECTED",
+      "TxHash": "z4DNiu1ILV0VJ9fccvzv+E5jJlkoSER9LcCw6H38mpA=",
+      "ExecutionResult": "ERROR_INPUT",
+      "TransactionStatus": "REJECTED_UNKNOWN_SIGNER_SCHEME"
+    }
+  },
+  {
+    "Test": "gp_req_1",
+    "GetTransactionReceiptProofRequest": "AQAAADQRAAAAgEEBTp5JFiAAAAByakFx2NNzrlg88uyatTEc8vt2dkxqo0asDHiltqxVVQ=="
+  },
+  {
+    "Test": "gp_res_1",
+    "GetTransactionReceiptProofResponse": {
+      "BlockHeight": "88081",
+      "BlockTimestamp": "2020-11-21T20:00:00.000Z",
+      "RequestStatus": "IN_PROCESS",
+      "PackedProof": "M0RVZneImQ==",
+      "TransactionStatus": "NO_RECORD_FOUND",
+      "PackedReceipt": "qrvM3e4="
+    }
+  }
+]

@@ -1,0 +1,23 @@
+/////////////////////////////////////////////////////////////////////////////
+// enums
+
+{{range .Enums}}{{$EnumName := .Name -}}
+type {{.Name}} uint16
+
+const (
+{{- range .Values}}
+	{{.Name}} {{$EnumName}} = {{.Value -}}
+{{end}}
+)
+
+func (n {{$EnumName}}) String() string {
+	switch n {
+	{{range .Values -}}
+	case {{.Name}}:
+		return "{{.Name}}"
+	{{end -}}
+	}
+	return "UNKNOWN"
+}
+
+{{end}}

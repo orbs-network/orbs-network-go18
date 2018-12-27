@@ -1,0 +1,7 @@
+.vscode
+
+# Ignore IntelliJ / GoLand config file except whose which are useful to share
+.idea/**/*.xml
+.idea/**/*.iml
+!.idea/runConfigurations/*.xml
+

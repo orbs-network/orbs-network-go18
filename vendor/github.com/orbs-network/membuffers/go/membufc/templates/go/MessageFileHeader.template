@@ -1,0 +1,15 @@
+// AUTO GENERATED FILE (by membufc proto compiler v{{.CompilerVersion}})
+package {{.PackageName}}
+
+import (
+{{if .HasMembuffers}}	"github.com/orbs-network/membuffers/go"
+	"bytes"
+{{end -}}
+{{if .HasMessages}}	"fmt"
+{{end -}}
+{{if and .HasServiceMethods .LanguageGoCtx}}	"context"
+{{end -}}
+{{range .Imports}}	"{{.}}"
+{{end -}}
+)
+

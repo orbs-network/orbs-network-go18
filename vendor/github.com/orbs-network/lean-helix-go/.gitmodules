@@ -1,0 +1,13 @@
+[submodule "vendor/github.com/orbs-network/go-mock"]
+	path = vendor/github.com/orbs-network/go-mock
+	url = https://github.com/orbs-network/go-mock
+
+[submodule "vendor/github.com/google/go-cmp"]
+	path = vendor/github.com/google/go-cmp
+	url = https://github.com/google/go-cmp
+[submodule "vendor/github.com/stretchr/testify"]
+	path = vendor/github.com/stretchr/testify
+	url = https://github.com/stretchr/testify
+[submodule "vendor/github.com/orbs-network/membuffers"]
+	path = vendor/github.com/orbs-network/membuffers
+	url = https://github.com/orbs-network/membuffers
